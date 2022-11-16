@@ -1,5 +1,5 @@
 import './mocks/fetchSimulator';
-import { fetchProduct, fetchProductsList } from '../helpers/fetchFunctions';
+import { fetchProductsList } from '../helpers/fetchFunctions';
 import computadorSearch from './mocks/search';
 
 // implemente seus testes aqui
@@ -13,20 +13,20 @@ describe('Teste a função fetchProductsList', () => {
     expect(fetch).toHaveBeenCalled()
   });
 
-  it('fetch é chamado com o endpoint correto ao executar fetchProductsList', async () => {
+  it('fetch é chamado com o endpoint correto ao executar fetchProductsList', () => {
     fetchProductsList('computador');
     expect(fetch).toHaveBeenCalledWith('https://api.mercadolibre.com/sites/MLB/search?q=computador')
   });
 
-  it(`Teste se o retorno da função fetchProductsList com o argumento 'computador' é uma estrutura de dados igual ao objeto computadorSearch, que já está importado no arquivo.`, () => {
-    fetchProductsList('computador');
-    expect(fetch).toEqual(computadorSearch)
+  it(`Teste se o retorno da função fetchProductsList com o argumento 'computador' é uma estrutura de dados igual ao objeto computadorSearch, que já está importado no arquivo.`, async () => {
+    const xablau = await fetchProductsList('computador');
+    expect(xablau).toEqual(computadorSearch)
   });
 
   it(`Teste se, ao chamar a função fetchProductsList sem argumento, retorna um erro com a mensagem: 'Termo de busca não informado'.`, async () => {
-    await fetchProductsList();
-    expect(fetch).toThrow('Termo de busca não informado')
-  })
+    
+    await expect(fetchProductsList()).rejects.toThrow('Termo de busca não informado')
+  });
 
   // it('...', () => {
   // });

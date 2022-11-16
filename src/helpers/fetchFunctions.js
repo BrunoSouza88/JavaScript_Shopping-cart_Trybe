@@ -2,6 +2,7 @@ export const fetchProduct = async (productID) => {
   if (!productID) throw new Error('ID não informado');
 
   const urlProductID = await fetch(`https://api.mercadolibre.com/items/${productID}`);
+
   const resultID = urlProductID.json();
   return resultID;
 };
