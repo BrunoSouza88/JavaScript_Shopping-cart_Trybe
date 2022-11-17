@@ -19,13 +19,22 @@ const loadedScreen = () => {
 };
 
 const createElementList = async () => {
-  loadingScreen();
-  const elementList = await fetchProductsList('computador');
-  loadedScreen();
-  elementList.forEach((element) => {
-    const list = createProductElement(element);
-    elementUl.appendChild(list);
-  });
+  try {
+    loadingScreen();
+    const elementList = await fetchProductsList('computador');
+    loadedScreen();
+    elementList.forEach((element) => {
+      const list = createProductElement(element);
+      elementUl.appendChild(list);
+    });
+  } catch (error) {
+    loadedScreen();
+    const apiFailed = document.createElement('h2');
+    apiFailed.classList.add('error');
+    elementUl.appendChild(apiFailed);
+
+    apiFailed.innerText = 'Algum erro ocorreu, recarregue a página e tente novamente';
+  }
 };
 
 window.onload = () => {
