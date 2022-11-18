@@ -2,13 +2,15 @@ import { searchCep } from './helpers/cepFunctions';
 import './style.css';
 import { fetchProduct, fetchProductsList } from './helpers/fetchFunctions';
 import { createCartProductElement, createProductElement } from './helpers/shopFunctions';
-import { saveCartID } from './helpers/cartFunctions';
+import { getSavedCartIDs, saveCartID } from './helpers/cartFunctions';
 
 document.querySelector('.cep-button').addEventListener('click', searchCep);
 
 const elementUl = document.querySelector('.products');
 
 const addToCardBtn = document.querySelector('.products');
+
+const elementOl = document.querySelector('.cart__products');
 
 const loadingScreen = () => {
   const loading = document.createElement('p');
@@ -19,6 +21,13 @@ const loadingScreen = () => {
 
 const loadedScreen = () => {
   document.querySelector('.loading').remove();
+};
+
+const apiError = () => {
+  const apiFailed = document.createElement('h2');
+  apiFailed.classList.add('error');
+  elementUl.appendChild(apiFailed);
+  apiFailed.innerText = 'Algum erro ocorreu, recarregue a página e tente novamente';
 };
 
 const createElementList = async () => {
@@ -32,11 +41,7 @@ const createElementList = async () => {
     });
   } catch (error) {
     loadedScreen();
-    const apiFailed = document.createElement('h2');
-    apiFailed.classList.add('error');
-    elementUl.appendChild(apiFailed);
-
-    apiFailed.innerText = 'Algum erro ocorreu, recarregue a página e tente novamente';
+    apiError();
   }
 };
 
@@ -45,12 +50,20 @@ const addItemCard = () => {
     const productId = event.target.parentNode.firstChild.innerText; // Agradecer aos colegas que me ajudaram nesse parentNode
     saveCartID(productId);
     const getProduct = await fetchProduct(productId);
-    const elementOl = document.querySelector('.cart__products');
     elementOl.appendChild(createCartProductElement(getProduct));
+  });
+};
+
+const loadLocalStorage = () => {
+  getSavedCartIDs().map(async (id) => {
+    const getProduct = await fetchProduct(id);
+    const savedLocal = createCartProductElement(getProduct);
+    elementOl.appendChild(savedLocal);
   });
 };
 
 window.onload = () => {
   createElementList();
   addItemCard();
+  loadLocalStorage();
 };
